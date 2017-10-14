@@ -30,6 +30,13 @@ import br.com.xxnickfuryxx.qrstarwars.constants.Constants;
 
 public class Utils {
 
+    public static SharedPreferences getSharedPreferences(Context context){
+
+        SharedPreferences preferences = context.getSharedPreferences(Constants.MY_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences;
+
+    }
+
     public static SharedPreferences.Editor getSharedEditor(Context context){
 
         SharedPreferences preferences = context.getSharedPreferences(Constants.MY_PREFERENCES, Context.MODE_PRIVATE);

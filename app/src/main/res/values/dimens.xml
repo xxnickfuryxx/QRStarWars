@@ -1,5 +1,10 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="dim_1">1dp</dimen>
+    <dimen name="dim_2">2dp</dimen>
+    <dimen name="dim_3">3dp</dimen>
+    <dimen name="dim_4">4dp</dimen>
+    <dimen name="dim_5">5dp</dimen>
     <dimen name="dim_10">10dp</dimen>
     <dimen name="dim_20">20dp</dimen>
     <dimen name="dim_30">30dp</dimen>

@@ -1,52 +1,45 @@
-package br.com.xxnickfuryxx.qrstarwars;
+package br.com.xxnickfuryxx.qrstarwars.ui.principal;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.SharedPreferencesCompat;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
+import br.com.xxnickfuryxx.qrstarwars.R;
+import br.com.xxnickfuryxx.qrstarwars.constants.Constants;
 import br.com.xxnickfuryxx.qrstarwars.model.Person;
+import br.com.xxnickfuryxx.qrstarwars.ui.details.principal.DetailsPersonActivity;
 import br.com.xxnickfuryxx.qrstarwars.utils.Utils;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class PrincipalActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private static final int RESULT_QR_OK = 1;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private List<String> permissions = new ArrayList<String>();
     private FloatingActionButton fab;
+    private ListView listPersons;
+    private IPrincipalPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_principal);
+
 
         this.init();
 
@@ -58,18 +51,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
         StrictMode.setThreadPolicy(policy);
 
-        this.loadPermissions(MY_PERMISSIONS_REQUEST);
+        presenter = new PrincipalPresenterImpl(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        this.loadPermissions(MY_PERMISSIONS_REQUEST);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
         fab.setSize(FloatingActionButton.SIZE_AUTO);
 
+        listPersons = (ListView)findViewById(R.id.activity_principal_lv_person);
+        listPersons.setAdapter(presenter.loadPersonAdapter());
+        listPersons.setOnItemClickListener(this);
 
     }
 
+    @Override
+    public void onBackPressed() {
+        
+    }
 
     @Override
     protected void onResume() {
@@ -80,6 +79,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fab.setVisibility(FloatingActionButton.GONE);
         }
 
+        listPersons.setAdapter(presenter.loadPersonAdapter());
+
+        RelativeLayout relList = (RelativeLayout) this.findViewById(R.id.activity_principal_rl_list);
+        RelativeLayout relNodata = (RelativeLayout) this.findViewById(R.id.activity_principal_rl_no_data);
+
+        if(presenter.sizeAdapterPersons() > 0){
+            relList.setVisibility(RelativeLayout.VISIBLE);
+            relNodata.setVisibility(RelativeLayout.GONE);
+        }else{
+            relList.setVisibility(RelativeLayout.GONE);
+            relNodata.setVisibility(RelativeLayout.VISIBLE);
+        }
+
     }
 
     @Override
@@ -87,19 +99,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
 
             Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-            intent.putExtra("SCAN_MODE", "QR_CODE_MODE"); // "PRODUCT_MODE for bar codes
+            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 
             startActivityForResult(intent, RESULT_QR_OK);
 
         } catch (Exception e) {
 
-            Log.e(MainActivity.class.getName(), e.getMessage());
+            Log.e(PrincipalActivity.class.getName(), e.getMessage());
 
             Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
             Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
             startActivity(marketIntent);
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.finish();
     }
 
     @Override
@@ -110,26 +128,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (resultCode == RESULT_OK) {
                 String url = data.getStringExtra("SCAN_RESULT");
 
-                try {
-                    Gson gson = new Gson();
-                    Person p = gson.fromJson(Utils.readUrl(url), Person.class);
-                    Location location = Utils.getLocationService(this);
-
-                    if(location != null){
-                        p.setLatitude(location.getLatitude());
-                        p.setLongitude(location.getLongitude());
-                        p.setUserCapture(Utils.getUserName(this));
-
-                    }
-
-                }catch(Exception e){
-                    Log.e(MainActivity.class.getName(), e.getMessage());
-                }
+                presenter.processCaptureQRCode(url);
 
             }
         }
     }
-
 
 
     private void loadPermissions(int requestCode) {
@@ -150,9 +153,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), requestCode);
             }
         } catch (Exception e) {
-            Log.e(MainActivity.class.getName(), e.getMessage());
+            Log.e(PrincipalActivity.class.getName(), e.getMessage());
         }
 
 
     }
+
+    public void showToastMsg(String msg) {
+        Snackbar snackbar = Snackbar.make(this.findViewById(R.id.activity_rl_root), msg, Snackbar.LENGTH_LONG);
+        snackbar.show();
+
+    }
+
+
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Person person = (Person)adapterView.getItemAtPosition(i);
+        presenter.sendDetailActivity(person);
+
+//        Intent intent = new Intent(this, DetailsPersonActivity.class);
+//        intent.setAction(Intent.ACTION_DEFAULT);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addCategory(Intent.CATEGORY_DEFAULT);
+//        intent.putExtra(Constants.PERSON_EXTRA, person);
+//
+//        startActivity(intent);
+    }
+
+
 }

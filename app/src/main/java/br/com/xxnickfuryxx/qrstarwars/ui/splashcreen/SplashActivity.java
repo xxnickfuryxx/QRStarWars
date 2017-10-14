@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import br.com.xxnickfuryxx.qrstarwars.MainActivity;
+import br.com.xxnickfuryxx.qrstarwars.ui.principal.PrincipalActivity;
 import br.com.xxnickfuryxx.qrstarwars.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -19,7 +19,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 startActivity(new Intent(SplashActivity.this
-                        , MainActivity.class));
+                        , PrincipalActivity.class));
             }
         }, 3000);
     }

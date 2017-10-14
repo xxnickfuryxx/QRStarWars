@@ -1,10 +1,12 @@
 
 package br.com.xxnickfuryxx.qrstarwars.model;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class Person {
+public class Person implements Serializable{
+
 
     @SerializedName("name")
     private String name;
@@ -38,9 +40,11 @@ public class Person {
     private String edited;
     @SerializedName("url")
     private String url;
-
+    @SerializedName("latitude")
     private double latitude;
+    @SerializedName("longitude")
     private double longitude;
+    @SerializedName("userCapture")
     private String userCapture;
 
     public double getLatitude() {

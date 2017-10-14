@@ -8,5 +8,6 @@ public class Constants {
 
     public static final String MY_PREFERENCES = "QR_STAR_WARS";
     public static final String LIST_PERSONS = "PERSONS";
+    public static final String PERSON_EXTRA = "PERSON";
 
 }

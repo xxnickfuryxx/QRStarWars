@@ -1,32 +1,30 @@
 package br.com.xxnickfuryxx.qrstarwars;
 
 
-import android.support.test.filters.SmallTest;
+import android.support.test.filters.LargeTest;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertTrue;
+import br.com.xxnickfuryxx.qrstarwars.ui.principal.PrincipalActivity;
 
 @RunWith(AndroidJUnit4.class)
-@SmallTest
+@LargeTest
 public class QrStarWarsInstrumentedTeste {
 
-    public static final String TEST_STRING = "This is a string";
-    public static final long TEST_LONG = 12345678L;
-    private MainActivity mainActivity;
+    @Rule
+    public ActivityTestRule<PrincipalActivity> mActivityRule = new ActivityTestRule<PrincipalActivity>(
+            PrincipalActivity.class);
 
-    @Before
-    public void init() {
-        mainActivity = new MainActivity();
-    }
 
     @Test
     public void testApp() {
 
-        assertTrue(true);
+
+
     }
 }
 

@@ -2,5 +2,7 @@
     <string name="app_name">QRStarWars</string>
     <string name="action_settings">Settings</string>
     <string name="no_qr_read">Não há dados</string>
-    <string name="activity_main_info">Para ler um QR Code clique no botão abaixo.</string>
+    <string name="activity_principal_info">Para ler um QR Code clique no botão abaixo.</string>
+    <string name="activity_principal_erro_exists">Personagem \'%1$s\' já lido anteriormente</string>
+    <string name="films_fragment_film_no_related">Filme não relacionado</string>
 </resources>
