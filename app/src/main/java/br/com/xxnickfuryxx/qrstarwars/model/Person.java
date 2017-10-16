@@ -2,6 +2,7 @@
 package br.com.xxnickfuryxx.qrstarwars.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
@@ -46,6 +47,16 @@ public class Person implements Serializable{
     private double longitude;
     @SerializedName("userCapture")
     private String userCapture;
+    @SerializedName("dateCapture")
+    private String dateCapture;
+
+    public String getDateCapture() {
+        return dateCapture;
+    }
+
+    public void setDateCapture(String dateCapture) {
+        this.dateCapture = dateCapture;
+    }
 
     public double getLatitude() {
         return latitude;

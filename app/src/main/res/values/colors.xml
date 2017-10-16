@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#22313F</color>
     <color name="colorAccent">#EB974E</color>
     <color name="colorText">#EEEEEE</color>
+    <color name="white">#EEEEEE</color>
+    <color name="colorTextLink">#EB974E</color>
+    <color name="gray">#7F8C8D</color>
 </resources>

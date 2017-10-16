@@ -3,6 +3,7 @@ package br.com.xxnickfuryxx.qrstarwars.ui.principal;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -21,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.xxnickfuryxx.qrstarwars.R;
-import br.com.xxnickfuryxx.qrstarwars.constants.Constants;
 import br.com.xxnickfuryxx.qrstarwars.model.Person;
-import br.com.xxnickfuryxx.qrstarwars.ui.details.principal.DetailsPersonActivity;
 import br.com.xxnickfuryxx.qrstarwars.utils.Utils;
 
 public class PrincipalActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -46,6 +45,9 @@ public class PrincipalActivity extends AppCompatActivity implements View.OnClick
 
     }
 
+    /**
+     * Metodo inicial da activity
+     */
     private void init() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
@@ -134,7 +136,10 @@ public class PrincipalActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-
+    /**
+     * CMostra na tela as permissao ao usuario.
+     * @param requestCode
+     */
     private void loadPermissions(int requestCode) {
 
         try {
@@ -171,15 +176,12 @@ public class PrincipalActivity extends AppCompatActivity implements View.OnClick
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Person person = (Person)adapterView.getItemAtPosition(i);
         presenter.sendDetailActivity(person);
+        overridePendingTransition(android.support.v7.appcompat.R.anim.abc_slide_in_bottom, android.support.v7.appcompat.R.anim.abc_slide_out_top);
 
-//        Intent intent = new Intent(this, DetailsPersonActivity.class);
-//        intent.setAction(Intent.ACTION_DEFAULT);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.addCategory(Intent.CATEGORY_DEFAULT);
-//        intent.putExtra(Constants.PERSON_EXTRA, person);
-//
-//        startActivity(intent);
     }
 
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 }
